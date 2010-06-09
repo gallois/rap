@@ -1,0 +1,17 @@
+That was fun!
+
+Generate some ASCII text (http://www.network-science.de/ascii/ might be a good start) and save them all in a folder with the following name pattern:
+  slide1.txt
+  slide2.txt
+  slide3.txt
+  slide4.txt
+  slide5.txt
+
+  and so on...
+
+Just run the script:
+  $ ruby rap.rb path_to_the_slides
+
+Switch between the slides with 'n' and 'p'... 'q' quits ;)
+
+That's it
