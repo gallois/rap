@@ -34,16 +34,12 @@ class Rap
       end
     end
     self.clear
-    starting_row, last_row, warn = self.set_terminal(file)
-    starting_row.times do
-      puts
-    end
     file = File.open("#{@path}/slide#{@slide_number}.txt", "r")
-    starting_row, last_row, warn = self.set_terminal(file)
+    starting_row, last_row, starting_col, warn = self.set_terminal(file)
     # just can't figure that shit out! :/
     file.close
     file = File.open("#{@path}/slide#{@slide_number}.txt", "r")
-    self.print_slide(file, starting_row)
+    self.print_slide(file, starting_row, starting_col)
     file.close
     self.print_slide_number(last_row, warn)
   end
@@ -58,11 +54,14 @@ class Rap
     slides.entries.each { |e| @total_slides = @total_slides + 1 if e =~ /slide[0-9]*\.txt/ }
   end
 
-  def print_slide(file, starting_row)
+  def print_slide(file, starting_row, starting_col)
     starting_row.times do
       puts
     end
     file.each_line do |line|
+      starting_col.times do |t|
+        line = " #{line}"
+      end
       puts line
     end
   end
@@ -77,13 +76,16 @@ class Rap
 
   def set_terminal(file)
     file_row_count = file.lines.count
+    file_col_count = max_col(file)
     terminal_row_count = terminal_size.last
+    terminal_col_count = terminal_size.first
     starting_row = (terminal_row_count / 2) - (file_row_count / 2)
+    starting_col = ((terminal_col_count / 2) - (file_col_count / 2)) / 2
     last_row = terminal_row_count - (starting_row + file_row_count)
 
     terminal_row_count < file_row_count ? warn = true : warn = false
 
-    [starting_row, last_row, warn]
+    [starting_row, last_row, starting_col, warn]
   end
   
   def prompt
@@ -95,6 +97,14 @@ class Rap
     elsif char == 113
       exit 0
     end
+  end
+
+  def max_col(file)
+    max = 0
+    file.each_line do |line|
+      max = line.length if line.length > max
+    end
+    return max
   end
   
   def clear
